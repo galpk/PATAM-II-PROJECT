@@ -1,6 +1,6 @@
 package test;
 
-/*
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class ZScore implements TimeSeriesAnomalyDetector {
 
     @Override
     public List<AnomalyReport> detect(TimeSeries ts) {
-/*
+
         float avg;
         float var;
         float zs , max=0;
@@ -63,4 +63,4 @@ public class ZScore implements TimeSeriesAnomalyDetector {
 
         return  null;
     }
-}*/
+}
