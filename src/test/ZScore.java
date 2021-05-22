@@ -4,9 +4,11 @@ package test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ZScore implements TimeSeriesAnomalyDetector {
+public class ZScore implements TimeSeriesAnomalyDetector
+{
 
-    public static class MaxCol{
+    public static class MaxCol
+    {
         public String Colname;
         float MaxNum;
         public MaxCol(String name , Float num)
@@ -17,17 +19,27 @@ public class ZScore implements TimeSeriesAnomalyDetector {
     }
     private List<MaxCol> ThresholdList ;
     @Override
-    public void learnNormal(TimeSeries ts) {
+    public void learnNormal(TimeSeries ts)
+    {
         ThresholdList = new ArrayList<>();
-        float avg;
-        float var;
-        float zs , max=0;
         MaxCol mc;
-        for (int i=0; i < ts.Dtable.size(); i++){
-            avg = StatLib.avg(ts.help(ts.Dtable.get(i).Vlist));
-            var = (float)Math.sqrt(StatLib.var(ts.help(ts.Dtable.get(i).Vlist)));
-            for (int j = 0; j < ts.Dtable.get(i).Vlist.size(); j++){
-                zs = Math.abs(ts.Dtable.get(i).Vlist.get(j) - avg)/var;
+
+        for (int i=0; i < ts.Dtable.size(); i++)
+        {
+            float zs , max=-999;
+            float avg = StatLib.avg(ts.help(ts.Dtable.get(i).Vlist));
+            float var = (float)Math.sqrt(StatLib.var(ts.help(ts.Dtable.get(i).Vlist)));
+            for (int j = 0; j < ts.Dtable.get(i).Vlist.size(); j++)
+            {
+                if(var == 0)
+                {
+                    zs =0;
+                }
+                else
+                {
+                    zs = Math.abs(ts.Dtable.get(i).Vlist.get(j) - avg)/var;
+                }
+
                 if (zs > max)
                 {
                     max =zs;
@@ -39,28 +51,33 @@ public class ZScore implements TimeSeriesAnomalyDetector {
     }
 
     @Override
-    public List<AnomalyReport> detect(TimeSeries ts) {
+    public List<AnomalyReport> detect(TimeSeries ts)
+    {
+        List<AnomalyReport> DetectListReport = new ArrayList<>();
 
-        float avg;
-        float var;
-        float zs , max=0;
-        float [] ZsMaxArr;
-        for (int i=0; i < ts.Dtable.size(); i++){
-            avg = StatLib.avg(ts.help(ts.Dtable.get(i).Vlist));
-            var = (float)Math.sqrt(StatLib.var(ts.help(ts.Dtable.get(i).Vlist)));
-            for (int j = 0; j < ts.Dtable.get(i).Vlist.size(); j++){
-                zs = Math.abs(ts.Dtable.get(i).Vlist.get(j) - avg)/var;
-                if (zs > max)
+        for (int i=0; i < ts.Dtable.size(); i++)
+        {
+            float zs , max=-999;
+            float avg = StatLib.avg(ts.help(ts.Dtable.get(i).Vlist));
+            float var = (float)Math.sqrt(StatLib.var(ts.help(ts.Dtable.get(i).Vlist)));
+            for (int j = 0; j < ts.Dtable.get(i).Vlist.size(); j++)
+            {
+                if (var !=0)
                 {
-                    max =zs;
+                    for (int k = 0 ; k < j; k++)
+                    {
+                        zs = Math.abs(ts.Dtable.get(i).Vlist.get(k) - avg)/var;
+                        if (zs >= ThresholdList.get(i).MaxNum)
+                        {
+                                AnomalyReport anomReport = new AnomalyReport(ts.Dtable.get(k).Fname,(long)zs);
+                                DetectListReport.add(anomReport);
+                        }
+                    }
                 }
-
             }
-           for (int i= 0 ; i < ThresholdList.size(); i++){
-               if ((max > ThresholdList.get(i))
-           }
-        }
 
-        return  null;
+        }
+        return  DetectListReport;
     }
 }
+
