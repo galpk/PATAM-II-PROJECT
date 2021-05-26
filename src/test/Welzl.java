@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -34,21 +35,38 @@ public class Welzl  implements  TimeSeriesAnomalyDetector{
     {
         for (final Point p :P)
         {
-            if(!valid_circle(c,P))
+            if(!is_inside_the_circle(c,p))
                 return false;
         }
         return true;
     }
-    Circle welzl (Vector<Point> P1 , Vector<Point>P2  ,int n)
+    Circle welzl_help (Vector<Point> P1 , Vector<Point>P2  ,int n)
     {
         if(n==0|| P2.size() ==3)
         {
-            return  bar or;
+            return  valid_circle(P1);
         }
+        int idx = (int)(Math.random()%n);
+        Point p = P1.get(idx);
+
+        Collections.swap(P1.get(idx),P1.get()[n-1]);
+
+        Circle d = welzl_help(P1,P2,n-1);
+        if (!is_inside_the_circle(d,p)){
+            return d;
+        }
+        P2.add(p);
+        return welzl_help(P1,P2,n-1);
+    }
+    Circle welzl(const Vector<Point> R){
+        Vector<Point> R_copy = R;
+        Collections.swap(R_copy.firstElement(),R_copy.lastElement()););
     }
 
     @Override
     public List<AnomalyReport> detect(TimeSeries ts) {
         return null;
     }
+
+
 }

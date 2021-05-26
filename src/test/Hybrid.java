@@ -7,7 +7,7 @@ public class Hybrid implements TimeSeriesAnomalyDetector{
 
     @Override
     public void learnNormal(TimeSeries ts) {
-
+        System.out.println("");
     }
 
     @Override
